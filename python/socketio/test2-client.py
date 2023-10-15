@@ -7,7 +7,6 @@ sio_client = socketio.AsyncClient(logger=False, engineio_logger=False)
 @sio_client.event()
 async def connect():
     print('I\'m connected')
-    await sio_client.emit('message', 'hello')
 
 @sio_client.event()
 async def disconnect():
@@ -22,23 +21,21 @@ async def main():
     try:
         await sio_client.connect(
             url='http://localhost:7777',
-            socketio_path='sockets'
-            )
+            socketio_path='sockets')
+
+        while sio_client.connected :
+            message = input("값을 입력하세요 (나가기 :exit) :")
+            if message =='exit':
+                await sio_client.disconnect()
+                break
+            
+            await sio_client.emit("message",message)
     except Exception as e:
         print(f"이벤트 전송 중 오류 발생: {e}")
-    
 
-    # while sio_client.connected :
-    #     message = input("값을 입력하세요")
-
-    #     try:
-    #         await sio_client.emit('message', message)
-    #     except Exception as e:
-    #         print(f"이벤트 전송 중 오류 발생: {e}")
 
     await sio_client.disconnect()
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())
-    loop.run_forever()

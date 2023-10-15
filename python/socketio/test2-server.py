@@ -29,9 +29,13 @@ async def connect(sid, env, auth):
     except Exception as e:
         print(f"이벤트 전송 중 오류 발생: {e}")
 
+@sio_server.event 
+async def disconnect(sid, env, auth):
+    print(f"{sid} client disconnected!!")
+
 @sio_server.event
 async def message(sid,data):
-    print(f'message id {sid}, and data is {}')
+    print(f'message id {sid}, and data is {data}')
 
 if __name__ == '__main__':
-    uvicorn.run('test2-server:app', host='0.0.0.0', port=7777, reload=True, debug=True)
+    uvicorn.run('test2-server:app', host='0.0.0.0', port=7777, reload=True)
